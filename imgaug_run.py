@@ -4,7 +4,7 @@ import cv2
 
 # https://imgaug.readthedocs.io/en/latest/
 def invoke(num=100):
-    image = cv2.imread("dataset/input/input.jpg")
+    image = cv2.imread("dataset/input/0200.jpg")
 
     seq = iaa.Sequential([
         iaa.Snowflakes()

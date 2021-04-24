@@ -4,7 +4,7 @@ import cv2
 
 # https://github.com/albumentations-team/albumentations
 def invoke(num=100):
-    image = cv2.imread("dataset/input/input.jpg")
+    image = cv2.imread("dataset/input/0200.jpg")
     #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     transform = A.Compose([
