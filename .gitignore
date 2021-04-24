@@ -133,3 +133,4 @@ dmypy.json
 /dataset/augmentor_output/*
 /dataset/albumentations_output/*
 /dataset/pytorch_output/*
+/dataset/autoaugment_output/*
