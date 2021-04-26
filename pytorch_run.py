@@ -2,10 +2,11 @@ import os
 import torch
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from torch.utils.data import Dataset
-from torchvision import transforms, utils
+from torchvision import transforms
 from skimage import io
+import cv2
+from datetime import datetime
 
 
 # https://pytorch.org/vision/stable/transforms.html
@@ -55,16 +56,19 @@ def invoke(num=100):
         transforms.ToTensor()])
 
     custom_dataset = CustomDataset(csv_file='dataset/annotation.csv', root_dir='dataset/input/', transform=transform)
-    dataset_loader = torch.utils.data.DataLoader(custom_dataset, batch_size=5, shuffle=True, num_workers=0)
+    dataset_loader = torch.utils.data.DataLoader(custom_dataset, shuffle=True, num_workers=0)
 
-    for i_batch, sample_batched in enumerate(dataset_loader):
+    print("Pytorch start time:")
+    print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+    for x in range(round(num / 5)):
+        print("{}/{}".format(x, round(num / 5)))
+        for idx, data in enumerate(dataset_loader):
+            img = data[0].numpy()
+            img = np.swapaxes(img, 0, 1)
+            img = np.swapaxes(img, 1, 2)
+            img = img * 255
 
-        # observe 4th batch and stop.
-        if i_batch == 0:
-            plt.figure()
-            grid = utils.make_grid(sample_batched)
-            plt.imshow(grid.numpy().transpose((1, 2, 0)))
-            plt.axis('off')
-            plt.ioff()
-            plt.show()
-            break
+            cv2.imwrite('dataset/pytorch_output/image_{}.jpg'.format(idx), img)
+
+    print("Pytorch end time:")
+    print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
