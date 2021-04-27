@@ -22,6 +22,7 @@ def invoke(num=100):
     #p.random_color(probability=0.3, min_factor=0, max_factor=1)
     p.resize(probability=1, width=400, height=400)
     p.sample(num, multi_threaded=True)
+    p.flip_left_right()
 
     print("Augmentor end time:")
     print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])

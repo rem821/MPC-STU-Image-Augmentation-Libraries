@@ -6,7 +6,7 @@ import autoaugment_run as autoaugment
 
 
 augmentor.invoke(num=100)
-albumentations.invoke(num=100)
-imgaug.invoke(num=100)
-pytorch.invoke(num=100)
-autoaugment.invoke(num=100)
+#albumentations.invoke(num=100)
+#imgaug.invoke(num=100)
+#pytorch.invoke(num=100)
+#autoaugment.invoke(num=100)
