@@ -6,7 +6,7 @@ from datetime import datetime
 
 # AutoAugment: Learning Augmentation Policies from Data, Ekin D. Cubuk and Barret Zoph and Dandelion Mane and Vijay
 # Vasudevan and Quoc V. Le, 2019
-# https://github.com/albumentations-team/albumentations
+# https://github.com/DeepVoltaire/AutoAugment
 def invoke(num=100):
     images = []
     for img in glob.glob("dataset/input/*.jpg"):
