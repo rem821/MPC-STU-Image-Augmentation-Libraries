@@ -1,7 +1,9 @@
 from imgaug import augmenters as iaa
 import cv2
 import glob
-from datetime import datetime
+import os
+import time
+from tqdm import tqdm
 
 
 # https://imgaug.readthedocs.io/en/latest/
@@ -16,15 +18,16 @@ def invoke(num=100):
         iaa.PerspectiveTransform()
     ])
 
-    print("Augmentor start time:")
-    print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
-    for x in range(num):
-        print("{}/{}".format(x, num))
+    if not os.path.exists("./dataset/imgaug_output/"):
+        os.mkdir("./dataset/imgaug_output/")
+
+    start_time = time.time_ns()
+    for x in tqdm(range(num)):
         transformed_image = seq.augment_image(image=images[x % len(images)])
         cv2.imwrite("./dataset/imgaug_output/transformed_{}.jpg".format(x), transformed_image)
 
-    print("Augmentor start time:")
-    print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+    end_time = time.time_ns()
+    print("imgaug took {} milliseconds to run".format((end_time - start_time) / 1_000_000))
 
 
 

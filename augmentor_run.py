@@ -1,7 +1,7 @@
 import Augmentor
 import os
 import glob
-from datetime import datetime
+import time
 
 
 # https://github.com/mdbloice/Augmentor
@@ -10,8 +10,7 @@ def invoke(num=100):
     for f in files:
         os.remove(f)
 
-    print("Augmentor start time:")
-    print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+    start_time = time.time_ns()
 
     p = Augmentor.Pipeline(source_directory="./dataset/input", output_directory="../augmentor_output")
     p.rotate(probability=1, max_left_rotation=25, max_right_rotation=25)
@@ -22,7 +21,6 @@ def invoke(num=100):
     #p.random_color(probability=0.3, min_factor=0, max_factor=1)
     p.resize(probability=1, width=400, height=400)
     p.sample(num, multi_threaded=True)
-    p.flip_left_right()
 
-    print("Augmentor end time:")
-    print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+    end_time = time.time_ns()
+    print("Augmentor took {} milliseconds to run".format((end_time - start_time) / 1_000_000))

@@ -1,7 +1,9 @@
 import albumentations as A
 import cv2
 import glob
-from datetime import datetime
+import os
+import time
+from tqdm import tqdm
 
 
 # https://github.com/albumentations-team/albumentations
@@ -15,13 +17,15 @@ def invoke(num=100):
         A.ShiftScaleRotate(p=1),
     ])
 
-    print("Albumentations start time:")
-    print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
-    for x in range(num):
-        print("{}/{}".format(x, num))
+    if not os.path.exists("./dataset/albumentations_output/"):
+        os.mkdir("./dataset/albumentations_output/")
+
+    start_time = time.time_ns()
+
+    for x in tqdm(range(num)):
         transformed = transform(image=images[x % len(images)])
         transformed_image = transformed["image"]
         cv2.imwrite("./dataset/albumentations_output/transformed_{}.jpg".format(x), transformed_image)
 
-    print("Albumentations end time:")
-    print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+    end_time = time.time_ns()
+    print("albumentations took {} milliseconds to run".format((end_time - start_time) / 1_000_000))

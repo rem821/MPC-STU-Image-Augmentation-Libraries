@@ -6,7 +6,8 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 from skimage import io
 import cv2
-from datetime import datetime
+import time
+from tqdm import tqdm
 
 
 # https://pytorch.org/vision/stable/transforms.html
@@ -58,17 +59,19 @@ def invoke(num=100):
     custom_dataset = CustomDataset(csv_file='dataset/annotation.csv', root_dir='dataset/input/', transform=transform)
     dataset_loader = torch.utils.data.DataLoader(custom_dataset, shuffle=True, num_workers=0)
 
-    print("Pytorch start time:")
-    print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
-    for x in range(round(num / 5)):
-        print("{}/{}".format(x, round(num / 5)))
+    if not os.path.exists("./dataset/pytorch_output/"):
+        os.mkdir("./dataset/pytorch_output/")
+
+    start_time = time.time_ns()
+
+    for x in tqdm(range(round(num / 5))):
         for idx, data in enumerate(dataset_loader):
             img = data[0].numpy()
             img = np.swapaxes(img, 0, 1)
             img = np.swapaxes(img, 1, 2)
             img = img * 255
 
-            cv2.imwrite('dataset/pytorch_output/image_{}.jpg'.format(idx), img)
+            cv2.imwrite('dataset/pytorch_output/image_{}_{}.jpg'.format(x, idx), img)
 
-    print("Pytorch end time:")
-    print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+    end_time = time.time_ns()
+    print("Pytorch took {} milliseconds to run".format((end_time - start_time) / 1_000_000))
