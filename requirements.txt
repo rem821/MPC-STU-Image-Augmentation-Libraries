@@ -2,6 +2,7 @@ Augmentor~=0.2.8
 albumentations~=0.5.2
 opencv-python~=4.5.1.48
 imgaug~=0.4.0
+imagecorruptions
 torch~=1.8.1
 torchvision~=0.9.1
 pandas~=1.2.4

@@ -8,6 +8,7 @@ from skimage import io
 import cv2
 import time
 from tqdm import tqdm
+from benchmark_enum import BenchmarkType
 
 
 # https://pytorch.org/vision/stable/transforms.html
@@ -49,12 +50,8 @@ class CustomDataset(Dataset):
         return image
 
 
-def invoke(num=100):
-    transform = transforms.Compose([
-        transforms.ToPILImage(),
-        transforms.RandomResizedCrop(400),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor()])
+def invoke(num=100, benchmark_type=BenchmarkType.RESIZE) -> float:
+    transform = setup_pipeline(benchmark_type)
 
     custom_dataset = CustomDataset(csv_file='dataset/annotation.csv', root_dir='dataset/input/', transform=transform)
     dataset_loader = torch.utils.data.DataLoader(custom_dataset, shuffle=True, num_workers=0)
@@ -74,4 +71,58 @@ def invoke(num=100):
             cv2.imwrite('dataset/pytorch_output/image_{}_{}.jpg'.format(x, idx), img)
 
     end_time = time.time_ns()
-    print("Pytorch took {} milliseconds to run".format((end_time - start_time) / 1_000_000))
+    milliseconds = (end_time - start_time) / 1_000_000
+    # print("Pytorch took {} milliseconds to run".format(milliseconds))
+    return milliseconds
+
+
+def setup_pipeline(benchmark_type) -> transforms.Compose:
+    p = transforms.Compose
+
+    if benchmark_type is BenchmarkType.HORIZONTAL_FLIP:
+        p = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.RandomHorizontalFlip(p=1),
+            transforms.ToTensor()])
+    elif benchmark_type is BenchmarkType.VERTICAL_FLIP:
+        p = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.RandomVerticalFlip(p=1),
+            transforms.ToTensor()])
+    elif benchmark_type is BenchmarkType.ROTATE:
+        p = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.RandomRotation(degrees=25),
+            transforms.ToTensor()])
+    elif benchmark_type is BenchmarkType.SHIFT_SCALE_ROTATE:
+        p = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.RandomResizedCrop(400),
+            transforms.ToTensor()])
+    elif benchmark_type is BenchmarkType.BRIGHTNESS:
+        p = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.ColorJitter(brightness=1),
+            transforms.ToTensor()])
+    elif benchmark_type is BenchmarkType.CONTRAST:
+        p = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.ColorJitter(contrast=1),
+            transforms.ToTensor()])
+    elif benchmark_type is BenchmarkType.RANDOM_CROP:
+        p = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.RandomCrop(size=(100, 100)),
+            transforms.ToTensor()])
+    elif benchmark_type is BenchmarkType.RESIZE:
+        p = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.Resize(size=(400, 400)),
+            transforms.ToTensor()])
+    elif benchmark_type is BenchmarkType.GRAYSCALE:
+        p = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.Grayscale(),
+            transforms.ToTensor()])
+
+    return p
