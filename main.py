@@ -8,7 +8,7 @@ import time
 import csv
 
 with open('benchmark.csv', 'w', newline='\n') as file:
-    writer = csv.writer(file, delimiter='.')
+    writer = csv.writer(file, delimiter=';')
     writer.writerow(["Action", "Augmentor", "Augmentor multithreaded", "Albumentations", "ImgAug", "PyTorch"])
 
     start_time = time.time_ns()

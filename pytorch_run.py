@@ -5,6 +5,7 @@ import numpy as np
 from torch.utils.data import Dataset
 from torchvision import transforms
 from skimage import io
+from PIL import Image
 import cv2
 import time
 from tqdm import tqdm
@@ -34,8 +35,7 @@ class CustomDataset(Dataset):
             index = index.tolist()
 
         img_path = os.path.join(self.root_dir, self.landmarks_frame.iloc[index, 0])
-        image = io.imread(img_path)
-        # image = read_image(img_path)
+        image = Image.open(img_path)
 
         landmarks = self.landmarks_frame.iloc[index, 1:]
         landmarks = np.array([landmarks])
@@ -81,47 +81,38 @@ def setup_pipeline(benchmark_type) -> transforms.Compose:
 
     if benchmark_type is BenchmarkType.HORIZONTAL_FLIP:
         p = transforms.Compose([
-            transforms.ToPILImage(),
             transforms.RandomHorizontalFlip(p=1),
             transforms.ToTensor()])
     elif benchmark_type is BenchmarkType.VERTICAL_FLIP:
         p = transforms.Compose([
-            transforms.ToPILImage(),
             transforms.RandomVerticalFlip(p=1),
             transforms.ToTensor()])
     elif benchmark_type is BenchmarkType.ROTATE:
         p = transforms.Compose([
-            transforms.ToPILImage(),
             transforms.RandomRotation(degrees=25),
             transforms.ToTensor()])
     elif benchmark_type is BenchmarkType.SHIFT_SCALE_ROTATE:
         p = transforms.Compose([
-            transforms.ToPILImage(),
             transforms.RandomResizedCrop(400),
             transforms.ToTensor()])
     elif benchmark_type is BenchmarkType.BRIGHTNESS:
         p = transforms.Compose([
-            transforms.ToPILImage(),
             transforms.ColorJitter(brightness=1),
             transforms.ToTensor()])
     elif benchmark_type is BenchmarkType.CONTRAST:
         p = transforms.Compose([
-            transforms.ToPILImage(),
             transforms.ColorJitter(contrast=1),
             transforms.ToTensor()])
     elif benchmark_type is BenchmarkType.RANDOM_CROP:
         p = transforms.Compose([
-            transforms.ToPILImage(),
             transforms.RandomCrop(size=(100, 100)),
             transforms.ToTensor()])
     elif benchmark_type is BenchmarkType.RESIZE:
         p = transforms.Compose([
-            transforms.ToPILImage(),
             transforms.Resize(size=(400, 400)),
             transforms.ToTensor()])
     elif benchmark_type is BenchmarkType.GRAYSCALE:
         p = transforms.Compose([
-            transforms.ToPILImage(),
             transforms.Grayscale(),
             transforms.ToTensor()])
 
